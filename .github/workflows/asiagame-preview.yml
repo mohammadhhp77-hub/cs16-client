@@ -1,0 +1,89 @@
+name: ASiA-GaME - Android preview build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-preview:
+    name: Build ASiA-GaME preview (3 ABIs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout your CS16Client fork + pinned submodules
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check required mainui sources exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s 3rdparty/mainui_cpp/menus/Main.cpp
+          test -s 3rdparty/mainui_cpp/menus/ServerBrowser.cpp
+          test -s android/gradlew
+
+      - name: Setup Java 21 for upstream Android Gradle
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Prepare Android native build
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ccache
+          # Upstream builds depend on YaPB version history.
+          if git -C 3rdparty/yapb rev-parse --is-shallow-repository | grep -qx true; then
+            git -C 3rdparty/yapb fetch --unshallow origin
+          fi
+
+      - name: Validate patch inputs (no changes yet)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 asiagame_patch/tests/test_patch.py
+          python3 asiagame_patch/tests/compile_patch_fragments.py
+          python3 asiagame_patch/apply_source_patch.py .
+
+      - name: Apply ASiA-GaME source changes (menu and favorites)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 asiagame_patch/apply_source_patch.py . --apply
+          python3 asiagame_patch/brand_android.py .
+          git diff --stat -- android/app/build.gradle android/app/src/main/AndroidManifest.xml
+          git -C 3rdparty/mainui_cpp diff --stat
+
+      - name: Build Android preview APK (upstream Gradle/CMake/NDK)
+        working-directory: android
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleGitDebug --stacktrace
+
+      - name: Inspect native APK output
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=android/app/build/outputs/apk/git/debug/app-git-debug.apk
+          test -s "$APK"
+          python3 asiagame_patch/verify_preview_apk.py "$APK"
+          mkdir -p dist
+          cp "$APK" dist/ASiA-GaME-CS-Mobile-PREVIEW.apk
+
+      - name: Upload installable PREVIEW (not production-signed)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ASiA-GaME-CS-Mobile-Preview
+          path: dist/ASiA-GaME-CS-Mobile-PREVIEW.apk
+          if-no-files-found: error
+          retention-days: 7
