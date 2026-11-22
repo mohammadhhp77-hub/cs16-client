@@ -59,6 +59,8 @@ jobs:
           set -euo pipefail
           python3 asiagame_patch/apply_source_patch.py . --apply
           python3 asiagame_patch/brand_android.py .
+          python3 asiagame_patch/install_touch_assets.py . --check
+          python3 asiagame_patch/install_touch_assets.py . --apply
           git diff --stat -- android/app/build.gradle android/app/src/main/AndroidManifest.xml
           git -C 3rdparty/mainui_cpp diff --stat
 
@@ -77,6 +79,7 @@ jobs:
           APK=android/app/build/outputs/apk/git/debug/app-git-debug.apk
           test -s "$APK"
           python3 asiagame_patch/verify_preview_apk.py "$APK"
+          python3 asiagame_patch/install_touch_assets.py . --verify-apk "$APK"
           mkdir -p dist
           cp "$APK" dist/ASiA-GaME-CS-Mobile-PREVIEW.apk
 
