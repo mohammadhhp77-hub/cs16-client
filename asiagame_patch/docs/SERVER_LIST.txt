@@ -1,0 +1,18 @@
+01. Top Player's ServeR | Servercs.ir:27015
+02. Public 2 | Servercs.ir:27013
+03. Public 3 | Servercs.ir:27022
+04. Public 4 | Servercs.ir:27012
+05. Public 5 | Servercs.ir:27011
+06. Aim-Awp | Servercs.ir:27018
+07. Football | Servercs.ir:27090
+08. Deathmatch | Servercs.ir:27025
+09. Deathrun | Servercs.ir:27020
+10. Kreedz | Servercs.ir:27024
+11. Gun-Game | Servercs.ir:27016
+12. HideNSeek | Servercs.ir:27026
+13. JailBreak | Servercs.ir:27019
+14. Knife | Servercs.ir:27021
+15. MultiMoD | Servercs.ir:27023
+16. PaintBall | Servercs.ir:27000
+17. Zambi | Servercs.ir:27017
+18. Match | Servercs.ir:27014
