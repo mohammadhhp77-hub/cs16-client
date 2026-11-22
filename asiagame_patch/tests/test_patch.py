@@ -103,6 +103,8 @@ def main():
         assert main_cpp.count('AddItem( asiaPublic[i] )') == 1
         assert 'Top Player\'s ServeR' in main_cpp
         assert 'QM_TOPLEFT' in main_cpp and 'QM_LEFT;' not in main_cpp
+        assert 'uiStatic.height' not in main_cpp, 'uiStatic_t has no height member'
+        assert 'const int asiaY = 768 * 35 / 100;' in main_cpp
         assert main_cpp.count('connect \\"Servercs.ir:') == 4
         assert check_cpp_command_literals(main_cpp)
         assert 'SetBackground' not in main_cpp

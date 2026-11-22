@@ -20,7 +20,7 @@ b=patch.patch_server_browser(BROWSER)
 # Mock out exactly public members our injection uses; compile the actual transformed
 # menu function, not rewritten Python copies of the behavior.
 main_stub=r'''
-struct Ui { int width=1024; int height=768; } uiStatic;
+struct Ui { int width=1024; } uiStatic; // Matches real uiStatic_t: NO height member.
 struct Callback { void SetCommand(bool, const char*) {} };
 struct MenuItem {
     Callback onReleased;

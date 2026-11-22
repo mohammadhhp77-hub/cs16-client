@@ -90,10 +90,10 @@ def patch_main(src: str) -> str:
         '\tminimizeBtn.SetRect( uiStatic.width - 72, 13, 32, 32 );\n\tquitButton.SetRect( uiStatic.width - 36, 13, 32, 32 );\n',
         '''\tminimizeBtn.SetRect( uiStatic.width - 72, 13, 32, 32 );
 \tquitButton.SetRect( uiStatic.width - 36, 13, 32, 32 );
-\t// Place all four links inside the center safe area of the wide mobile crop.
+\t// mainui_cpp uses 768 logical vertical units; uiStatic_t has width but no height.
 \tconst int asiaX = uiStatic.width * 56 / 100;
-\tconst int asiaY = uiStatic.height * 35 / 100;
-\tconst int asiaRow = uiStatic.height * 7 / 100;
+\tconst int asiaY = 768 * 35 / 100;
+\tconst int asiaRow = 768 * 7 / 100;
 \tfor( int i = 0; i < 4; ++i )
 \t\tasiaPublic[i].SetRect( asiaX, asiaY + i * asiaRow,
 \t\t\tuiStatic.width - asiaX - 16, asiaRow );
